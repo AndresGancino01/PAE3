@@ -63,6 +63,16 @@
             android:layout_height="65dp"
             android:text="GUARDAR VEHÍCULO"
             android:backgroundTint="#2E7D32"
+            android:textStyle="bold"
+            android:layout_marginBottom="10dp"/>
+
+        <Button
+            android:id="@+id/btn_ver_catalogo"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:text="VER CATÁLOGO"
+            android:backgroundTint="#1B5E20"
+            android:textColor="@android:color/white"
             android:textStyle="bold" />
 
     </LinearLayout>

@@ -12,6 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PAE3">
         <activity
+            android:name=".CatalogoActivity"
+            android:exported="false"
+            android:theme="@style/Theme.PAE3" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
