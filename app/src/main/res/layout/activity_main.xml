@@ -13,67 +13,21 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="REGISTRO DE VEHÍCULO"
+            android:text="SISTEMA ALQUILER PAE 3"
             android:textSize="24sp"
             android:textStyle="bold"
             android:textColor="#1B5E20"
             android:layout_gravity="center"
             android:layout_marginBottom="30dp" />
 
-        <EditText
-            android:id="@+id/et_marca"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:hint="Marca (Ej: Toyota)"
-            android:background="@android:drawable/editbox_background"
-            android:layout_marginBottom="15dp"
-            android:padding="10dp"/>
+        <EditText android:id="@+id/et_marca" android:layout_width="match_parent" android:layout_height="50dp" android:hint="Marca" android:layout_marginBottom="10dp" android:padding="10dp" android:background="@android:drawable/editbox_background"/>
+        <EditText android:id="@+id/et_modelo" android:layout_width="match_parent" android:layout_height="50dp" android:hint="Modelo" android:layout_marginBottom="10dp" android:padding="10dp" android:background="@android:drawable/editbox_background"/>
+        <EditText android:id="@+id/et_placa" android:layout_width="match_parent" android:layout_height="50dp" android:hint="Placa" android:layout_marginBottom="10dp" android:padding="10dp" android:background="@android:drawable/editbox_background"/>
+        <EditText android:id="@+id/et_precio" android:layout_width="match_parent" android:layout_height="50dp" android:hint="Precio por día" android:inputType="numberDecimal" android:layout_marginBottom="25dp" android:padding="10dp" android:background="@android:drawable/editbox_background"/>
 
-        <EditText
-            android:id="@+id/et_modelo"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:hint="Modelo (Ej: Corolla)"
-            android:background="@android:drawable/editbox_background"
-            android:layout_marginBottom="15dp"
-            android:padding="10dp"/>
-
-        <EditText
-            android:id="@+id/et_placa"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:hint="Placa (Ej: PBX-1234)"
-            android:background="@android:drawable/editbox_background"
-            android:layout_marginBottom="15dp"
-            android:padding="10dp"/>
-
-        <EditText
-            android:id="@+id/et_precio"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:hint="Precio por día ($)"
-            android:inputType="numberDecimal"
-            android:background="@android:drawable/editbox_background"
-            android:layout_marginBottom="30dp"
-            android:padding="10dp"/>
-
-        <Button
-            android:id="@+id/btn_guardar"
-            android:layout_width="match_parent"
-            android:layout_height="65dp"
-            android:text="GUARDAR VEHÍCULO"
-            android:backgroundTint="#2E7D32"
-            android:textStyle="bold"
-            android:layout_marginBottom="10dp"/>
-
-        <Button
-            android:id="@+id/btn_ver_catalogo"
-            android:layout_width="match_parent"
-            android:layout_height="65dp"
-            android:text="VER CATÁLOGO"
-            android:backgroundTint="#1B5E20"
-            android:textColor="@android:color/white"
-            android:textStyle="bold" />
+        <Button android:id="@+id/btn_guardar" android:layout_width="match_parent" android:layout_height="60dp" android:text="GUARDAR VEHÍCULO" android:backgroundTint="#2E7D32" android:layout_marginBottom="10dp"/>
+        <Button android:id="@+id/btn_ver_catalogo" android:layout_width="match_parent" android:layout_height="60dp" android:text="IR AL CATÁLOGO" android:backgroundTint="#1B5E20" android:layout_marginBottom="10dp"/>
+        <Button android:id="@+id/btn_ver_reportes" android:layout_width="match_parent" android:layout_height="60dp" android:text="INTELIGENCIA DE NEGOCIO" android:backgroundTint="#455A64" />
 
     </LinearLayout>
 </ScrollView>
