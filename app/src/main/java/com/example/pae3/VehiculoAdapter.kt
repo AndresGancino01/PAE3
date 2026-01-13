@@ -4,6 +4,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -20,8 +22,7 @@ class VehiculoAdapter(private var listaVehiculos: List<Vehiculo>, private val db
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VehiculoViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_vehiculo, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_vehiculo, parent, false)
         return VehiculoViewHolder(view)
     }
 
@@ -30,41 +31,50 @@ class VehiculoAdapter(private var listaVehiculos: List<Vehiculo>, private val db
         val estaDisponible = v.disponible == 1
 
         holder.txtMarcaModelo.text = "${v.marca} ${v.modelo}"
-        holder.txtDetalles.text = "Placa: ${v.placa} | Precio: $${v.precio}"
+        holder.txtDetalles.text = if (estaDisponible) "Placa: ${v.placa} | $${v.precio}/día"
+        else "ALQUILADO A: ${v.nombreCliente}\nCédula: ${v.cedulaCliente}"
 
-        // Cambiar texto del botón según estado
         holder.btnAlquilar.text = if (estaDisponible) "Alquilar" else "Devolver"
         holder.btnAlquilar.setBackgroundColor(if (estaDisponible) 0xFF2E7D32.toInt() else 0xFF1565C0.toInt())
 
-        // ACCIÓN: ALQUILAR / CANCELAR
         holder.btnAlquilar.setOnClickListener {
-            val accion = if (estaDisponible) "ALQUILAR" else "DEVOLVER"
-            AlertDialog.Builder(holder.itemView.context)
-                .setTitle("Confirmar Acción")
-                .setMessage("¿Está seguro que desea $accion este vehículo (${v.marca})?")
-                .setPositiveButton("SÍ, OK") { _, _ ->
-                    val nuevoEstado = if (estaDisponible) 0 else 1
-                    db.cambiarDisponibilidad(v.id!!, nuevoEstado)
-                    Toast.makeText(holder.itemView.context, "Operación exitosa", Toast.LENGTH_SHORT).show()
-                    actualizarLista(db.obtenerVehiculos())
+            if (estaDisponible) {
+                val layout = LinearLayout(holder.itemView.context).apply {
+                    orientation = LinearLayout.VERTICAL
+                    setPadding(50, 20, 50, 20)
                 }
-                .setNegativeButton("CANCELAR", null)
-                .show()
+                val inputNombre = EditText(holder.itemView.context).apply { hint = "Nombre del Cliente" }
+                val inputCedula = EditText(holder.itemView.context).apply { hint = "Número de Cédula" }
+                layout.addView(inputNombre)
+                layout.addView(inputCedula)
+
+                AlertDialog.Builder(holder.itemView.context)
+                    .setTitle("Registrar Alquiler")
+                    .setView(layout)
+                    .setPositiveButton("Confirmar") { _, _ ->
+                        val nombre = inputNombre.text.toString()
+                        val cedula = inputCedula.text.toString()
+                        if (nombre.isNotEmpty() && cedula.isNotEmpty()) {
+                            db.alquilarVehiculo(v.id!!, nombre, cedula)
+                            actualizarLista(db.obtenerVehiculos())
+                        }
+                    }.setNegativeButton("Cancelar", null).show()
+            } else {
+                AlertDialog.Builder(holder.itemView.context)
+                    .setTitle("Devolución")
+                    .setMessage("¿Confirmar devolución de ${v.marca}?")
+                    .setPositiveButton("Sí, Devolver") { _, _ ->
+                        val resumen = "Devolución: ${v.marca} ${v.modelo} (Placa: ${v.placa}) - Cliente: ${v.nombreCliente}"
+                        db.devolverVehiculo(v.id!!, resumen)
+                        actualizarLista(db.obtenerVehiculos())
+                        Toast.makeText(holder.itemView.context, "Historial actualizado", Toast.LENGTH_SHORT).show()
+                    }.setNegativeButton("No", null).show()
+            }
         }
 
-        // ACCIÓN: ELIMINAR
         holder.btnEliminar.setOnClickListener {
-            AlertDialog.Builder(holder.itemView.context)
-                .setTitle("¡ALERTA!")
-                .setMessage("¿Realmente desea ELIMINAR este carro del sistema? Esta acción no se puede deshacer.")
-                .setPositiveButton("SÍ, ELIMINAR") { _, _ ->
-                    db.eliminarVehiculo(v.id!!)
-                    Toast.makeText(holder.itemView.context, "Vehículo borrado", Toast.LENGTH_SHORT).show()
-                    actualizarLista(db.obtenerVehiculos())
-                }
-                .setNegativeButton("CANCELAR", null)
-                .setIcon(android.R.drawable.ic_delete)
-                .show()
+            db.eliminarVehiculo(v.id!!)
+            actualizarLista(db.obtenerVehiculos())
         }
     }
 

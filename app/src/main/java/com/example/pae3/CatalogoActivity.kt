@@ -13,8 +13,8 @@ class CatalogoActivity : AppCompatActivity() {
         val rv = findViewById<RecyclerView>(R.id.rv_catalogo)
         val db = AyudanteBaseDatos(this)
 
-        // Configuración de la lista con el parámetro 'db' corregido
         rv.layoutManager = LinearLayoutManager(this)
+        // Pasamos tanto la lista como la base de datos (db)
         rv.adapter = VehiculoAdapter(db.obtenerVehiculos(), db)
     }
 }

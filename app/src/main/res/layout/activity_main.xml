@@ -13,21 +13,22 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="SISTEMA ALQUILER PAE 3"
-            android:textSize="24sp"
+            android:text="ALQUILER DE AUTOS PAE 3"
+            android:textSize="22sp"
             android:textStyle="bold"
             android:textColor="#1B5E20"
             android:layout_gravity="center"
-            android:layout_marginBottom="30dp" />
+            android:layout_marginBottom="25dp" />
 
         <EditText android:id="@+id/et_marca" android:layout_width="match_parent" android:layout_height="50dp" android:hint="Marca" android:layout_marginBottom="10dp" android:padding="10dp" android:background="@android:drawable/editbox_background"/>
         <EditText android:id="@+id/et_modelo" android:layout_width="match_parent" android:layout_height="50dp" android:hint="Modelo" android:layout_marginBottom="10dp" android:padding="10dp" android:background="@android:drawable/editbox_background"/>
         <EditText android:id="@+id/et_placa" android:layout_width="match_parent" android:layout_height="50dp" android:hint="Placa" android:layout_marginBottom="10dp" android:padding="10dp" android:background="@android:drawable/editbox_background"/>
-        <EditText android:id="@+id/et_precio" android:layout_width="match_parent" android:layout_height="50dp" android:hint="Precio por día" android:inputType="numberDecimal" android:layout_marginBottom="25dp" android:padding="10dp" android:background="@android:drawable/editbox_background"/>
+        <EditText android:id="@+id/et_precio" android:layout_width="match_parent" android:layout_height="50dp" android:hint="Precio por día" android:inputType="numberDecimal" android:layout_marginBottom="20dp" android:padding="10dp" android:background="@android:drawable/editbox_background"/>
 
-        <Button android:id="@+id/btn_guardar" android:layout_width="match_parent" android:layout_height="60dp" android:text="GUARDAR VEHÍCULO" android:backgroundTint="#2E7D32" android:layout_marginBottom="10dp"/>
-        <Button android:id="@+id/btn_ver_catalogo" android:layout_width="match_parent" android:layout_height="60dp" android:text="IR AL CATÁLOGO" android:backgroundTint="#1B5E20" android:layout_marginBottom="10dp"/>
-        <Button android:id="@+id/btn_ver_reportes" android:layout_width="match_parent" android:layout_height="60dp" android:text="INTELIGENCIA DE NEGOCIO" android:backgroundTint="#455A64" />
+        <Button android:id="@+id/btn_guardar" android:layout_width="match_parent" android:layout_height="55dp" android:text="REGISTRAR AUTO" android:backgroundTint="#2E7D32" android:layout_marginBottom="8dp"/>
+        <Button android:id="@+id/btn_ver_catalogo" android:layout_width="match_parent" android:layout_height="55dp" android:text="CATÁLOGO / RENTAS" android:backgroundTint="#1B5E20" android:layout_marginBottom="8dp"/>
+        <Button android:id="@+id/btn_ver_reportes" android:layout_width="match_parent" android:layout_height="55dp" android:text="ESTADÍSTICAS" android:backgroundTint="#455A64" android:layout_marginBottom="8dp"/>
+        <Button android:id="@+id/btn_ver_historial" android:layout_width="match_parent" android:layout_height="55dp" android:text="HISTORIAL DE RENTAS" android:backgroundTint="#FF8F00" />
 
     </LinearLayout>
 </ScrollView>
