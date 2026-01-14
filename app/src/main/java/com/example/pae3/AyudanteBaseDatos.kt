@@ -5,96 +5,90 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.content.ContentValues
 
-class AyudanteBaseDatos(contexto: Context) : SQLiteOpenHelper(contexto, "AlquilerPAE3.db", null, 6) {
+class AyudanteBaseDatos(context: Context) : SQLiteOpenHelper(context, "RentCar_V6_Verde.db", null, 1) {
 
     override fun onCreate(db: SQLiteDatabase?) {
-        // Tablas principales
-        db?.execSQL("CREATE TABLE vehiculos (id INTEGER PRIMARY KEY AUTOINCREMENT, marca TEXT, modelo TEXT, placa TEXT, precio REAL, disponible INTEGER, nombreCliente TEXT, cedulaCliente TEXT)")
-        db?.execSQL("CREATE TABLE historial (id INTEGER PRIMARY KEY AUTOINCREMENT, detalle TEXT, fecha TEXT)")
+        db?.execSQL("""CREATE TABLE vehiculos (id INTEGER PRIMARY KEY AUTOINCREMENT, marca TEXT, modelo TEXT, 
+            placa TEXT, precio REAL, disponible INTEGER, cliente TEXT, cedula TEXT, fechaIni TEXT, fechaFin TEXT, total REAL)""")
 
-        // Tabla de usuarios con ROL
-        db?.execSQL("CREATE TABLE usuarios (id INTEGER PRIMARY KEY AUTOINCREMENT, usuario TEXT, password TEXT, rol TEXT)")
+        db?.execSQL("CREATE TABLE usuarios (id INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT, apellido TEXT, correo TEXT UNIQUE, password TEXT, rol TEXT)")
 
-        // Cuentas predeterminadas para pruebas
-        insertarUsuarioInicial(db, "admin", "admin123", "ADMIN")
-        insertarUsuarioInicial(db, "empleado", "123", "OPERADOR")
-    }
-
-    private fun insertarUsuarioInicial(db: SQLiteDatabase?, user: String, pass: String, rol: String) {
-        val v = ContentValues().apply {
-            put("usuario", user)
-            put("password", pass)
-            put("rol", rol)
+        // Datos iniciales
+        db?.execSQL("INSERT INTO usuarios (nombre, apellido, correo, password, rol) VALUES ('Admin', 'Sistema', 'admin@mail.com', 'admin123', 'ADMIN')")
+        for (i in 1..20) {
+            val v = ContentValues().apply {
+                put("marca", listOf("Toyota", "Hyundai", "Suzuki").random()); put("modelo", "SUV-${i}")
+                put("placa", "PBA-${1000+i}"); put("precio", (35..80).random().toDouble()); put("disponible", 1)
+            }
+            db?.insert("vehiculos", null, v)
         }
-        db?.insert("usuarios", null, v)
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, old: Int, new: Int) {
-        db?.execSQL("DROP TABLE IF EXISTS vehiculos")
-        db?.execSQL("DROP TABLE IF EXISTS historial")
-        db?.execSQL("DROP TABLE IF EXISTS usuarios")
-        onCreate(db)
+        db?.execSQL("DROP TABLE IF EXISTS vehiculos"); db?.execSQL("DROP TABLE IF EXISTS usuarios"); onCreate(db)
     }
 
-    // --- SEGURIDAD ---
-    fun validarUsuario(user: String, pass: String): String? {
-        val db = this.readableDatabase
-        val cursor = db.rawQuery("SELECT rol FROM usuarios WHERE usuario=? AND password=?", arrayOf(user, pass))
-        var rol: String? = null
-        if (cursor.moveToFirst()) rol = cursor.getString(0)
-        cursor.close()
-        return rol
-    }
-
-    fun registrarUsuario(user: String, pass: String, rol: String): Long {
-        val db = this.writableDatabase
+    // Corregido: Acepta los 5 argumentos que envía tu LoginActivity
+    fun registrarUsuario(nom: String, ape: String, mail: String, pass: String, rol: String): Long {
         val v = ContentValues().apply {
-            put("usuario", user); put("password", pass); put("rol", rol)
+            put("nombre", nom); put("apellido", ape); put("correo", mail); put("password", pass); put("rol", rol)
         }
-        return db.insert("usuarios", null, v)
+        return this.writableDatabase.insert("usuarios", null, v)
     }
 
-    // --- GESTIÓN DE VEHÍCULOS ---
     fun insertarVehiculo(v: Vehiculo): Long {
-        val db = this.writableDatabase
-        return db.insert("vehiculos", null, ContentValues().apply {
+        val valo = ContentValues().apply {
             put("marca", v.marca); put("modelo", v.modelo); put("placa", v.placa); put("precio", v.precio); put("disponible", 1)
-        })
+        }
+        return this.writableDatabase.insert("vehiculos", null, valo)
+    }
+
+    fun realizarReserva(id: Int, cliente: String, f1: String, f2: String, total: Double) {
+        val v = ContentValues().apply {
+            put("disponible", 0); put("cliente", cliente); put("fechaIni", f1); put("fechaFin", f2); put("total", total)
+        }
+        this.writableDatabase.update("vehiculos", v, "id=?", arrayOf(id.toString()))
+    }
+
+    fun liberarVehiculo(id: Int) {
+        val v = ContentValues().apply { put("disponible", 1); put("cliente", ""); put("total", 0.0) }
+        this.writableDatabase.update("vehiculos", v, "id=?", arrayOf(id.toString()))
     }
 
     fun obtenerVehiculos(): List<Vehiculo> {
         val lista = mutableListOf<Vehiculo>()
+        // Es mejor usar una variable para la DB
         val db = this.readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM vehiculos", null)
-        if (cursor.moveToFirst()) {
+        val c = db.rawQuery("SELECT * FROM vehiculos", null)
+
+        if (c.moveToFirst()) {
             do {
-                lista.add(Vehiculo(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getDouble(4), cursor.getInt(5), cursor.getString(6), cursor.getString(7)))
-            } while (cursor.moveToNext())
+                // Usamos el operador ?: "" para que si el valor es nulo, use un texto vacío
+                // y evitamos que la app se cierre.
+                val id = c.getInt(0)
+                val marca = c.getString(1) ?: ""
+                val modelo = c.getString(2) ?: ""
+                val placa = c.getString(3) ?: ""
+                val precio = c.getDouble(4)
+                val anio = c.getInt(5)
+                val color = c.getString(6) ?: ""
+                val estado = "" // El índice 7 parece que lo saltas manualmente
+                val imagenPath = c.getString(8) ?: ""
+                val transmision = c.getString(9) ?: ""
+                val motor = c.getDouble(10)
+
+                lista.add(Vehiculo(id, marca, modelo, placa, precio, anio, color, estado, imagenPath, transmision, motor))
+            } while (c.moveToNext())
         }
-        cursor.close()
+        c.close()
         return lista
     }
 
-    fun alquilarVehiculo(id: Int, nombre: String, cedula: String) {
-        val v = ContentValues().apply { put("disponible", 0); put("nombreCliente", nombre); put("cedulaCliente", cedula) }
-        this.writableDatabase.update("vehiculos", v, "id=?", arrayOf(id.toString()))
+    fun validarLogin(u: String, p: String): Map<String, String>? {
+        val c = this.readableDatabase.rawQuery("SELECT rol, nombre FROM usuarios WHERE correo=? AND password=?", arrayOf(u, p))
+        var res: Map<String, String>? = null
+        if (c.moveToFirst()) res = mapOf("rol" to c.getString(0), "nombre" to c.getString(1))
+        c.close()
+        return res
     }
-
-    fun devolverVehiculo(id: Int, detalle: String) {
-        val h = ContentValues().apply { put("detalle", detalle); put("fecha", java.text.DateFormat.getDateTimeInstance().format(java.util.Date())) }
-        this.writableDatabase.insert("historial", null, h)
-        val v = ContentValues().apply { put("disponible", 1); put("nombreCliente", ""); put("cedulaCliente", "") }
-        this.writableDatabase.update("vehiculos", v, "id=?", arrayOf(id.toString()))
-    }
-
-    fun obtenerHistorial(): List<String> {
-        val lista = mutableListOf<String>()
-        val db = this.readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM historial ORDER BY id DESC", null)
-        if (cursor.moveToFirst()) { do { lista.add("📅 ${cursor.getString(2)}\n📝 ${cursor.getString(1)}") } while (cursor.moveToNext()) }
-        cursor.close()
-        return lista
-    }
-
-    fun eliminarVehiculo(id: Int) { this.writableDatabase.delete("vehiculos", "id=?", arrayOf(id.toString())) }
 }

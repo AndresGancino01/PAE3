@@ -6,7 +6,10 @@ data class Vehiculo(
     val modelo: String,
     val placa: String,
     val precio: Double,
-    var disponible: Int = 1, // 1: Sí, 0: No
-    var nombreCliente: String? = null,
-    var cedulaCliente: String? = null
+    val disponible: Int, // 1 disponible, 0 alquilado
+    val cliente: String = "",
+    val cedula: String = "",
+    val fechaInicio: String = "",
+    val fechaFin: String = "",
+    val costoTotal: Double = 0.0
 )
