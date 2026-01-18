@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:orientation="vertical" android:padding="20dp">
+
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="DETALLES DEL ALQUILER" android:textStyle="bold"
+        android:layout_marginBottom="15dp"/>
+
+    <TextView android:id="@+id/txtReservaInfo" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:text="Vehículo: "
+        android:layout_marginBottom="10dp"/>
+
+    <EditText android:id="@+id/resFechaIni" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:hint="Fecha de inicio (DD/MM/AAAA)"
+        android:inputType="date"/>
+
+    <EditText android:id="@+id/resFechaFin" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:hint="Fecha de entrega (DD/MM/AAAA)"
+        android:layout_marginTop="10dp" android:inputType="date"/>
+
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:text="* El costo total se calculará al confirmar." android:textSize="12sp"
+        android:layout_marginTop="15dp" android:textColor="#757575"/>
+</LinearLayout>

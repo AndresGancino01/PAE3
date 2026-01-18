@@ -1,29 +1,42 @@
 package com.example.pae3
 
 import android.os.Bundle
-import android.widget.TextView
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 class ReportesActivity : AppCompatActivity() {
+    private lateinit var db: AyudanteBaseDatos
+    private lateinit var adaptador: VehiculoAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_reportes)
 
-        val db = AyudanteBaseDatos(this)
-        val listaVehiculos = db.obtenerVehiculos()
+        db = AyudanteBaseDatos(this)
 
-        // Cálculo de métricas
-        val total = listaVehiculos.size
-        val alquilados = listaVehiculos.count { it.disponible == 0 }
-        val disponibles = listaVehiculos.count { it.disponible == 1 }
+        val rv = findViewById<RecyclerView>(R.id.rvReportes)
+        rv.layoutManager = LinearLayoutManager(this)
 
-        // Sumamos el precio de solo los vehículos que están alquilados (estado 0)
-        val ingresosActuales = listaVehiculos.filter { it.disponible == 0 }.sumOf { it.precio }
+        // Inicializamos el adaptador en modo "ADMIN" para que no muestre el botón de reserva
+        // Pasamos una función vacía {} ya que en reportes no se reserva nada
+        adaptador = VehiculoAdapter(mutableListOf(), "ADMIN", db) { }
+        rv.adapter = adaptador
 
-        // Asignar los valores a la interfaz
-        findViewById<TextView>(R.id.txt_total_vehiculos).text = "Total en Flota: $total"
-        findViewById<TextView>(R.id.txt_alquilados).text = "Vehículos Alquilados: $alquilados"
-        findViewById<TextView>(R.id.txt_disponibles).text = "Vehículos Disponibles: $disponibles"
-        findViewById<TextView>(R.id.txt_ganancias_potenciales).text = "$$ingresosActuales"
+        findViewById<Button>(R.id.btnVolverReportes).setOnClickListener { finish() }
+
+        cargarDatosReporte()
+    }
+
+    private fun cargarDatosReporte() {
+        // Obtenemos TODOS los vehículos (incluyendo los que NO están disponibles)
+        // El parámetro 'false' indica que no queremos filtrar solo por disponibles
+        val listaCompleta = db.obtenerVehiculos(false)
+
+        // Filtramos para mostrar solo aquellos que ya han sido rentados (disponible == 0)
+        val listaRentados = listaCompleta.filter { it.disponible == 0 }
+
+        adaptador.actualizarLista(listaRentados)
     }
 }

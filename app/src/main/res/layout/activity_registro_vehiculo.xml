@@ -1,32 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="20dp"
-    android:background="#F5F5F5">
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical" android:padding="25dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="REGISTRAR NUEVO AUTO"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:layout_gravity="center"
-        android:layout_marginBottom="30dp"
-        android:textColor="#1B5E20"/>
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:text="REGISTRO TÉCNICO DE VEHÍCULO" android:textStyle="bold"
+        android:layout_marginBottom="25dp"/>
 
-    <EditText android:id="@+id/et_marca" android:layout_width="match_parent" android:layout_height="55dp" android:hint="Marca (Ej: Toyota)" android:layout_marginBottom="10dp" android:background="@android:drawable/editbox_background" android:padding="10dp"/>
-    <EditText android:id="@+id/et_modelo" android:layout_width="match_parent" android:layout_height="55dp" android:hint="Modelo (Ej: Corolla)" android:layout_marginBottom="10dp" android:background="@android:drawable/editbox_background" android:padding="10dp"/>
-    <EditText android:id="@+id/et_placa" android:layout_width="match_parent" android:layout_height="55dp" android:hint="Placa (Ej: ABC-1234)" android:layout_marginBottom="10dp" android:background="@android:drawable/editbox_background" android:padding="10dp"/>
-    <EditText android:id="@+id/et_precio" android:layout_width="match_parent" android:layout_height="55dp" android:hint="Precio por día ($)" android:inputType="numberDecimal" android:layout_marginBottom="20dp" android:background="@android:drawable/editbox_background" android:padding="10dp"/>
+    <EditText android:id="@+id/edtMarca" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:hint="Marca (Ej: Toyota)"/>
 
-    <Button
-        android:id="@+id/btn_guardar_final"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:text="GUARDAR EN BASE DE DATOS"
-        android:backgroundTint="#1B5E20"
-        android:textColor="#FFFFFF"/>
+    <EditText android:id="@+id/edtModelo" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:hint="Modelo (Ej: Hilux)"
+        android:layout_marginTop="10dp"/>
 
+    <EditText android:id="@+id/edtPlaca" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:hint="Placa del vehículo"
+        android:layout_marginTop="10dp"/>
+
+    <EditText android:id="@+id/edtPrecio" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:hint="Precio diario de renta"
+        android:inputType="numberDecimal" android:layout_marginTop="10dp"/>
+
+    <Button android:id="@+id/btnGuardarVehiculo" android:layout_width="match_parent"
+        android:layout_height="60dp" android:text="GUARDAR EN SISTEMA"
+        android:layout_marginTop="30dp" android:backgroundTint="#2E7D32"/>
 </LinearLayout>

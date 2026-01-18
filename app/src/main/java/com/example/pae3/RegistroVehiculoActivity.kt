@@ -1,9 +1,7 @@
 package com.example.pae3
 
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 
 class RegistroVehiculoActivity : AppCompatActivity() {
@@ -12,35 +10,24 @@ class RegistroVehiculoActivity : AppCompatActivity() {
         setContentView(R.layout.activity_registro_vehiculo)
 
         val db = AyudanteBaseDatos(this)
-
-        val etMarca = findViewById<EditText>(R.id.et_marca)
-        val etModelo = findViewById<EditText>(R.id.et_modelo)
-        val etPlaca = findViewById<EditText>(R.id.et_placa)
-        val etPrecio = findViewById<EditText>(R.id.et_precio)
-        val btnGuardar = findViewById<Button>(R.id.btn_guardar_final)
+        val btnGuardar = findViewById<Button>(R.id.btnGuardarVehiculo)
 
         btnGuardar.setOnClickListener {
-            val marca = etMarca.text.toString()
-            val modelo = etModelo.text.toString()
-            val placa = etPlaca.text.toString()
-            val precioStr = etPrecio.text.toString()
+            val ma = findViewById<EditText>(R.id.edtMarca).text.toString()
+            val mo = findViewById<EditText>(R.id.edtModelo).text.toString()
+            val pl = findViewById<EditText>(R.id.edtPlaca).text.toString()
+            val prStr = findViewById<EditText>(R.id.edtPrecio).text.toString()
+            val pr = prStr.toDoubleOrNull() ?: 0.0
 
-            if (marca.isNotEmpty() && modelo.isNotEmpty() && placa.isNotEmpty() && precioStr.isNotEmpty()) {
-                val nuevoVehiculo = Vehiculo(0, marca, modelo, placa, precioStr.toDouble(), 1, "", "")
-                val res = db.insertarVehiculo(nuevoVehiculo)
-
-                if (res != -1L) {
-                    Toast.makeText(this, "Vehículo registrado exitosamente", Toast.LENGTH_SHORT).show()
-                    // Limpiar campos
-                    etMarca.text.clear()
-                    etModelo.text.clear()
-                    etPlaca.text.clear()
-                    etPrecio.text.clear()
-                } else {
-                    Toast.makeText(this, "Error al guardar. Verifica la placa.", Toast.LENGTH_SHORT).show()
+            if (ma.isNotEmpty() && pl.isNotEmpty()) {
+                val resultado = db.insertarVehiculo(Vehiculo(0, ma, mo, pl, pr, 1))
+                // Corregido: Comparación válida con el ID generado (Long)
+                if (resultado != -1L) {
+                    Toast.makeText(this, "Vehículo Guardado", Toast.LENGTH_SHORT).show()
+                    finish()
                 }
             } else {
-                Toast.makeText(this, "Por favor llena todos los campos", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Complete los campos", Toast.LENGTH_SHORT).show()
             }
         }
     }

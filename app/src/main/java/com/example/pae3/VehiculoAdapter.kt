@@ -1,63 +1,52 @@
 package com.example.pae3
 
-import android.app.DatePickerDialog
 import android.view.*
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
-import java.util.*
-import java.util.concurrent.TimeUnit
 
-class VehiculoAdapter(private var lista: List<Vehiculo>, private val rol: String, private val usuarioLogueado: String) :
-    RecyclerView.Adapter<VehiculoAdapter.ViewHolder>() {
+class VehiculoAdapter(
+    private var lista: List<Vehiculo>,
+    private val rol: String,
+    private val db: AyudanteBaseDatos,
+    private val clickReserva: (Vehiculo) -> Unit // Lambda para el clic
+) : RecyclerView.Adapter<VehiculoAdapter.VehiculoViewHolder>() {
 
-    class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-        val txtInfo: TextView = v.findViewById(R.id.txt_item_info)
-        val btnAccion: Button = v.findViewById(R.id.btn_item_alquilar)
+    class VehiculoViewHolder(v: View) : RecyclerView.ViewHolder(v) {
+        val txtInfo = v.findViewById<TextView>(R.id.txtInfoVehiculo)
+        val txtPrecio = v.findViewById<TextView>(R.id.txtPrecioVehiculo)
+        val btnRes = v.findViewById<Button>(R.id.btnReservar)
+        val btnEli = v.findViewById<Button>(R.id.btnEliminar)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VehiculoViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.item_vehiculo, parent, false)
-        return ViewHolder(v)
+        return VehiculoViewHolder(v)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val v = lista[position]
-        val db = AyudanteBaseDatos(holder.itemView.context)
+    override fun onBindViewHolder(holder: VehiculoViewHolder, position: Int) {
+        val veh = lista[position]
+        holder.txtInfo.text = "${veh.marca} ${veh.modelo} [${veh.placa}]"
+        holder.txtPrecio.text = "Tarifa: $${veh.precio}/día"
 
-        if (v.disponible == 1) {
-            holder.txtInfo.text = "${v.marca} ${v.modelo}\nPlaca: ${v.placa}\n$${v.precio}/día - DISPONIBLE"
-            holder.btnAccion.text = "RESERVAR"
-            holder.btnAccion.setBackgroundColor(android.graphics.Color.parseColor("#2E7D32")) // Verde
-            holder.btnAccion.setOnClickListener { mostrarPicker(holder, v, db) }
-        } else {
-            holder.txtInfo.text = "${v.marca} ${v.modelo}\nALQUILADO POR: ${v.cliente}\nTOTAL: $${v.costoTotal}"
-            if (rol == "ADMIN") {
-                holder.btnAccion.text = "LIBERAR"
-                holder.btnAccion.setOnClickListener { db.liberarVehiculo(v.id!!); actualizar(db.obtenerVehiculos()) }
-            } else {
-                holder.btnAccion.text = "OCUPADO"
-                holder.btnAccion.isEnabled = false
+        if (rol == "ADMIN") {
+            holder.btnRes.visibility = View.GONE
+            holder.btnEli.visibility = View.VISIBLE
+            holder.btnEli.setOnClickListener {
+                db.eliminarVehiculo(veh.id)
+                actualizarLista(db.obtenerVehiculos(false))
             }
+        } else {
+            holder.btnRes.visibility = View.VISIBLE
+            holder.btnEli.visibility = View.GONE
+            holder.btnRes.setOnClickListener { clickReserva(veh) }
         }
     }
 
-    private fun mostrarPicker(holder: ViewHolder, v: Vehiculo, db: AyudanteBaseDatos) {
-        val c = Calendar.getInstance()
-        DatePickerDialog(holder.itemView.context, { _, y1, m1, d1 ->
-            val f1 = Calendar.getInstance().apply { set(y1, m1, d1) }
-            DatePickerDialog(holder.itemView.context, { _, y2, m2, d2 ->
-                val f2 = Calendar.getInstance().apply { set(y2, m2, d2) }
-                val dias = TimeUnit.MILLISECONDS.toDays(f2.timeInMillis - f1.timeInMillis)
-                if (dias > 0) {
-                    val total = dias * v.precio
-                    db.realizarReserva(v.id!!, usuarioLogueado, "$d1/${m1+1}", "$d2/${m2+1}", total)
-                    actualizar(db.obtenerVehiculos())
-                    Toast.makeText(holder.itemView.context, "Costo: $$total por $dias días", Toast.LENGTH_LONG).show()
-                }
-            }, y1, m1, d1 + 1).show()
-        }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show()
-    }
-
     override fun getItemCount() = lista.size
-    fun actualizar(nueva: List<Vehiculo>) { this.lista = nueva; notifyDataSetChanged() }
+
+    // Nombre de función unificado para evitar errores de compilación
+    fun actualizarLista(nuevaLista: List<Vehiculo>) {
+        lista = nuevaLista
+        notifyDataSetChanged()
+    }
 }

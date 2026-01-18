@@ -1,57 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:padding="30dp"
-    android:background="#F5F5F5">
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical" android:gravity="center" android:padding="40dp"
+    android:background="#FFFFFF">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="RENT-A-CAR PAE 3"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:textColor="#1B5E20"
-        android:layout_marginBottom="40dp"/>
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="SISTEMA DE GESTIÓN VEHICULAR" android:textSize="18sp"
+        android:textStyle="bold" android:textColor="#1A237E" android:layout_marginBottom="40dp"/>
 
-    <EditText
-        android:id="@+id/et_usuario"
-        android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:hint="Usuario"
-        android:padding="15dp"
-        android:background="@android:drawable/editbox_background"
-        android:layout_marginBottom="10dp"/>
+    <EditText android:id="@+id/txtCorreoLogin" android:layout_width="match_parent"
+        android:layout_height="50dp" android:hint="Correo electrónico"
+        android:paddingLeft="15dp" android:background="@android:drawable/edit_text"
+        android:layout_marginBottom="15dp" android:inputType="textEmailAddress"/>
 
-    <EditText
-        android:id="@+id/et_password"
-        android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:hint="Contraseña"
-        android:inputType="textPassword"
-        android:padding="15dp"
-        android:background="@android:drawable/editbox_background"
-        android:layout_marginBottom="20dp"/>
+    <EditText android:id="@+id/txtPasswordLogin" android:layout_width="match_parent"
+        android:layout_height="50dp" android:hint="Contraseña"
+        android:paddingLeft="15dp" android:background="@android:drawable/edit_text"
+        android:layout_marginBottom="25dp" android:inputType="textPassword"/>
 
-    <Button
-        android:id="@+id/btn_entrar"
-        android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:text="ENTRAR"
-        android:backgroundTint="#1B5E20"
-        android:layout_marginBottom="10dp"/>
+    <Button android:id="@+id/btnEntrar" android:layout_width="match_parent"
+        android:layout_height="55dp" android:text="INICIAR SESIÓN"
+        android:backgroundTint="#1A237E" android:textColor="#FFFFFF"/>
 
-    <TextView
-        android:id="@+id/tv_registrar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="¿No tienes cuenta? Regístrate aquí"
-        android:textColor="#1565C0"
-        android:textStyle="bold"
-        android:padding="10dp"
-        android:clickable="true"
-        android:focusable="true"/>
-
+    <Button android:id="@+id/btnIrRegistro" android:layout_width="match_parent"
+        android:layout_height="55dp" android:text="CREAR CUENTA NUEVA"
+        android:layout_marginTop="10dp" android:backgroundTint="#ECEFF1"
+        android:textColor="#1A237E"/>
 </LinearLayout>
