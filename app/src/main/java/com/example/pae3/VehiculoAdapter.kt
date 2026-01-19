@@ -4,6 +4,8 @@ import android.graphics.Color
 import android.view.*
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class VehiculoAdapter(
     private var lista: List<Vehiculo>,
@@ -27,20 +29,18 @@ class VehiculoAdapter(
         h.txtInfo.text = "${v.marca} ${v.modelo} [${v.placa}]"
 
         if (v.disponible == 1) {
-            h.txtPrecio.text = "Disponible - $${v.precio}/día"
+            h.txtPrecio.text = "ESTADO: DISPONIBLE\nTarifa: $${v.precio}/día"
             h.txtPrecio.setTextColor(Color.parseColor("#2E7D32"))
         } else {
-            h.txtPrecio.text = "RENTADO POR: ${v.cliente}\nEntrega: ${v.fechaFin}"
+            // MOSTRAMOS EL TOTAL CALCULADO AQUÍ
+            h.txtPrecio.text = "RENTADO POR: ${v.cliente}\nTOTAL A PAGAR: $${v.total}\nENTREGA: ${v.fechaFin}"
             h.txtPrecio.setTextColor(Color.RED)
         }
 
         if (rol == "ADMIN") {
             h.btnRes.visibility = View.GONE
             h.btnEli.visibility = View.VISIBLE
-            h.btnEli.setOnClickListener {
-                db.eliminarVehiculo(v.id)
-                onAction()
-            }
+            h.btnEli.setOnClickListener { db.eliminarVehiculo(v.id); onAction() }
         } else {
             h.btnEli.visibility = View.GONE
             if (v.disponible == 1) {
@@ -50,10 +50,10 @@ class VehiculoAdapter(
                 h.btnRes.setOnClickListener { mostrarDialogoReserva(h.itemView.context, v) }
             } else if (v.cliente == nombreUsuario) {
                 h.btnRes.visibility = View.VISIBLE
-                h.btnRes.text = "ENTREGAR VEHÍCULO"
+                h.btnRes.text = "ENTREGAR Y PAGAR"
                 h.btnRes.setBackgroundColor(Color.BLACK)
                 h.btnRes.setOnClickListener {
-                    db.entregarVehiculo(v.id)
+                    db.entregarVehiculo(v)
                     onAction()
                 }
             } else {
@@ -65,23 +65,33 @@ class VehiculoAdapter(
     private fun mostrarDialogoReserva(ctx: android.content.Context, v: Vehiculo) {
         val view = LayoutInflater.from(ctx).inflate(R.layout.dialog_reserva, null)
         androidx.appcompat.app.AlertDialog.Builder(ctx)
-            .setTitle("Rentar ${v.marca}")
+            .setTitle("Confirmar Renta")
             .setView(view)
-            .setPositiveButton("Confirmar") { _, _ ->
+            .setPositiveButton("CONFIRMAR") { _, _ ->
                 val f1 = view.findViewById<EditText>(R.id.resFechaIni).text.toString()
                 val f2 = view.findViewById<EditText>(R.id.resFechaFin).text.toString()
+
                 if (f1.isNotEmpty() && f2.isNotEmpty()) {
-                    db.realizarReserva(v.id, nombreUsuario, f1, f2, v.precio)
+                    val dias = calcularDias(f1, f2)
+                    val totalCalculado = dias * v.precio
+                    db.realizarReserva(v.id, nombreUsuario, f1, f2, totalCalculado)
                     onAction()
                 }
-            }.setNegativeButton("Cancelar", null).show()
+            }.show()
+    }
+
+    // Función para calcular la diferencia de días entre fechas
+    private fun calcularDias(inicio: String, fin: String): Long {
+        return try {
+            val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val d1 = sdf.parse(inicio)
+            val d2 = sdf.parse(fin)
+            val diff = d2!!.time - d1!!.time
+            val res = diff / (1000 * 60 * 60 * 24)
+            if (res <= 0) 1 else res // Mínimo 1 día
+        } catch (e: Exception) { 1 }
     }
 
     override fun getItemCount() = lista.size
-
-    // Método UNIFICADO para actualizar la lista
-    fun actualizar(n: List<Vehiculo>) {
-        lista = n
-        notifyDataSetChanged()
-    }
+    fun actualizar(n: List<Vehiculo>) { lista = n; notifyDataSetChanged() }
 }
