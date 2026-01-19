@@ -19,9 +19,11 @@ class ReportesActivity : AppCompatActivity() {
         val rv = findViewById<RecyclerView>(R.id.rvReportes)
         rv.layoutManager = LinearLayoutManager(this)
 
-        // Inicializamos el adaptador en modo "ADMIN" para que no muestre el botón de reserva
-        // Pasamos una función vacía {} ya que en reportes no se reserva nada
-        adaptador = VehiculoAdapter(mutableListOf(), "ADMIN", db) { }
+        // CORRECCIÓN: Se pasan todos los parámetros requeridos por el constructor
+        // 1. Lista vacía inicial, 2. Rol ADMIN, 3. Nombre vacío, 4. Instancia db, 5. Acción al actualizar
+        adaptador = VehiculoAdapter(mutableListOf(), "ADMIN", "", db) {
+            cargarDatosReporte()
+        }
         rv.adapter = adaptador
 
         findViewById<Button>(R.id.btnVolverReportes).setOnClickListener { finish() }
@@ -30,13 +32,13 @@ class ReportesActivity : AppCompatActivity() {
     }
 
     private fun cargarDatosReporte() {
-        // Obtenemos TODOS los vehículos (incluyendo los que NO están disponibles)
-        // El parámetro 'false' indica que no queremos filtrar solo por disponibles
-        val listaCompleta = db.obtenerVehiculos(false)
+        // CORRECCIÓN: Usamos la función obtenerTodosLosVehiculos que creamos para la nueva lógica
+        val listaCompleta = db.obtenerTodosLosVehiculos()
 
-        // Filtramos para mostrar solo aquellos que ya han sido rentados (disponible == 0)
+        // Filtramos para mostrar solo los que NO están disponibles (los rentados)
         val listaRentados = listaCompleta.filter { it.disponible == 0 }
 
-        adaptador.actualizarLista(listaRentados)
+        // CORRECCIÓN: Usamos el método 'actualizar' definido en el adaptador
+        adaptador.actualizar(listaRentados)
     }
 }

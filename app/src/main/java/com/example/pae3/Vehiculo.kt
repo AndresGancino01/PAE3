@@ -1,6 +1,5 @@
 package com.example.pae3
 
-// Clase que define la estructura del objeto Vehículo
 data class Vehiculo(
     val id: Int,
     val marca: String,
